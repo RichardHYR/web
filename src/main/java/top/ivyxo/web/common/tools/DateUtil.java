@@ -26,4 +26,18 @@ public class DateUtil {
         return null;
     }
 
+    /**
+     * 获取格式化后的时间 Richard - 2019-12-10 21:28:58
+     * @return
+     */
+    public static String getNowTime(){
+        //得到long类型当前时间
+        long l = System.currentTimeMillis();
+        //new日期对象
+        Date date = new Date(l);
+        //转换提日期输出格式
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
+    }
+
 }
