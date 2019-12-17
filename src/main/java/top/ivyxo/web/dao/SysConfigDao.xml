@@ -29,6 +29,16 @@
         is_del
     </sql>
 
+    <sql id="tbl_columns">
+        gmt_create,
+        gmt_modified,
+        remark,
+        sys_key,
+        sys_value,
+        is_use,
+        is_del
+    </sql>
+
     <select id="selectById" parameterType="Long" resultMap="sysConfigResultMap">
         select
         <include refid="view_columns"/>
@@ -38,13 +48,49 @@
     <select id="selectByKey" parameterType="String" resultMap="sysConfigResultMap">
         select
         <include refid="view_columns"/>
-        from sys_config where sys_key = #{key}
+        from sys_config where is_del != 1 AND sys_key = #{key}
     </select>
 
-    <select id="list" parameterType="String" resultMap="sysConfigResultMap">
+    <select id="listByKey" parameterType="String" resultMap="sysConfigResultMap">
         select
         <include refid="view_columns"/>
-        from sys_config where sys_key = #{key}
+        FROM sys_config WHERE is_del != 1 AND sys_key LIKE '#{key}%'
     </select>
+
+    <!-- 插入表中有自增id时,设置useGeneratedKeys="true",keyProperty="id"可以获取表记录添加后的自增Id   -->
+    <insert id="insert" parameterType="top.ivyxo.web.entity.SySConfigDO" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_config (
+        <include refid="tbl_columns"/>
+        ) values (
+        #{gmtCreate},
+        #{gmtModified},
+        #{sysKey},
+        #{sysValue},
+        #{use},
+        #{del}
+        )
+    </insert>
+
+    <update id="update" parameterType="top.ivyxo.web.entity.SySConfigDO">
+        update sys_config set
+        gmt_modified = now()
+        <if test="remark != null">
+            ,remark = #{remark}
+        </if>
+
+        <if test="sysValue != null">
+            ,sys_value = #{sysValue}
+        </if>
+
+        <if test="use != null">
+            ,is_use = #{use}
+        </if>
+
+        <if test="del != null">
+            ,is_del = #{del}
+        </if>
+
+        where id = #{id} or sys_key = #{sysKey}
+    </update>
 
 </mapper>

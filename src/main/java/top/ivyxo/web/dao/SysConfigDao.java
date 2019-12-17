@@ -29,7 +29,7 @@ public interface SysConfigDao {
      * @param key 相似key
      * @return
      */
-    List<SySConfigDO> list(String key);
+    List<SySConfigDO> listByKey(String key);
 
     /**
      * 插入记录 Richard - 2019-12-12 21:59:12
