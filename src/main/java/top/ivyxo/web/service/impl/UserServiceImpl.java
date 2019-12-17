@@ -129,6 +129,7 @@ public class UserServiceImpl implements UserService {
             return res;
         }
         res.data = EUserServiceCode.SUCCESS.getCode();
+        LOG.info("更新成功");
         return res;
     }
 
