@@ -6,4 +6,45 @@
 <!--namespace:映射的接口文件全包名一致-->
 <mapper namespace="top.ivyxo.web.dao.SysConfigDao">
 
+    <resultMap id="sysConfigResultMap" type="top.ivyxo.web.entity.SySConfigDO">
+        <id property="id" column="id" />
+        <result property="gmtCreate"           column="gmt_create" />
+        <result property="gmtModified"         column="gmt_modified" />
+        <result property="remark"              column="remark" />
+        <!--以上为公用属性-->
+        <result property="sysKey"              column="sys_key"/>
+        <result property="sysValue"            column="sys_value"/>
+        <result property="isUse"              column="is_use"/>
+        <result property="isDel"              column="is_del"/>
+    </resultMap>
+
+    <sql id="view_columns">
+        id,
+        gmt_create,
+        gmt_modified,
+        remark,
+        sys_key,
+        sys_value,
+        is_use,
+        is_del
+    </sql>
+
+    <select id="selectById" parameterType="Long" resultMap="sysConfigResultMap">
+        select
+        <include refid="view_columns"/>
+        from sys_config where id = #{id}
+    </select>
+
+    <select id="selectByKey" parameterType="String" resultMap="sysConfigResultMap">
+        select
+        <include refid="view_columns"/>
+        from sys_config where sys_key = #{key}
+    </select>
+
+    <select id="list" parameterType="String" resultMap="sysConfigResultMap">
+        select
+        <include refid="view_columns"/>
+        from sys_config where sys_key = #{key}
+    </select>
+
 </mapper>

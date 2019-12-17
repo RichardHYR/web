@@ -1,5 +1,8 @@
 package top.ivyxo.web.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.ivyxo.web.common.data.EStatusCode;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.model.UUserVO;
@@ -22,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/v1")
 public class UserController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     HttpServletRequest httpServletRequest;
 
@@ -40,11 +45,13 @@ public class UserController {
                                     , userRegisterQuery.getPsw1(), userRegisterQuery.getPsw2())){
             res.code = EStatusCode.INVALID_PARAM.getCode();
             res.msg = EStatusCode.INVALID_PARAM.getMsg();
+            LOG.info("register warning:{},param:{}",res.msg, JSONObject.toJSONString(userRegisterQuery));
             return res;
         }
         if(!userRegisterQuery.getPsw1().equals(userRegisterQuery.getPsw2())){
             res.code = EUserServiceCode.PASSWORD_FAIL.getCode().toString();
             res.msg = EUserServiceCode.PASSWORD_FAIL.getMsg();
+            LOG.info("register warning:{},param:{}",res.msg,JSONObject.toJSONString(userRegisterQuery));
             return res;
         }
         res = userService.register(userRegisterQuery);
@@ -64,6 +71,7 @@ public class UserController {
         if(StringUtils.isAnyEmpty(account,password)){
             res.code = EStatusCode.INVALID_PARAM.getCode();
             res.msg = EStatusCode.INVALID_PARAM.getMsg();
+            LOG.info("login warning:{},param:{}",res.msg,account + ":" + password);
             return res;
         }
         res = userService.login(account,password);
@@ -81,6 +89,7 @@ public class UserController {
         if(StringUtils.isAnyEmpty(userIdStr)){
             res.code = EStatusCode.NOTLOGIN.getCode();
             res.msg = EStatusCode.NOTLOGIN.getMsg();
+            LOG.info("loginOut warning:{}",res.msg);
             return res;
         }
         Long userId = Long.valueOf(userIdStr);

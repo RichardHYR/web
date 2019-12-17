@@ -1,6 +1,7 @@
 package top.ivyxo.web.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import top.ivyxo.web.common.data.EStatusCode;
 import top.ivyxo.web.common.data.RedisKeyPrefix;
@@ -36,20 +37,26 @@ public class LoginInterceptor implements HandlerInterceptor{
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("已经进入了登录拦截器......." + JSONObject.toJSONString(request.getHeaderNames()));
-        System.out.println("head信息:"
-                + "\n host:" + request.getHeader("host")
-                + "\n RequestURI:" + request.getRequestURI()
-                + "\n ServletPath:" + request.getServletPath()
-                + "\n connection:" + JSONObject.toJSONString(request.getHttpServletMapping())
-                + "\n Session:" + JSONObject.toJSONString(request.getSession()));
-
+        LOG.info("执行登录拦截器");
         String userId = request.getHeader("user_id");
         String userSession = request.getHeader("user_session");
         ResponseObj res = new ResponseObj();
         if(userId == null || userSession == null
                 || !userSession.equals(DigestUtils.md5Hex(userId))
                 || redisTemplate.opsForValue().get(RedisKeyPrefix.USER + userId) == null){
+            LOG.info("输出请求信息:"
+                    + "\n Proto: " + request.getProtocol()
+                    + "\n Host: " + request.getRemoteHost()
+                    + "\n Local Port: " + request.getLocalPort()
+                    + "\n Server Port: " + request.getServerPort()
+                    + "\n Remote Port: " + request.getRemotePort()
+                    + "\n Content Path: " + request.getContextPath()
+                    + "\n Servlet Path: " + request.getServletPath()
+                    + "\n content-type: " + request.getHeader("content-type")
+                    + "\n host: " + request.getHeader("host")
+                    + "\n user_id: " + request.getHeader("user_id")
+                    + "\n user_session: " + request.getHeader("user_session")
+            );
             res.code = EStatusCode.NOTLOGIN.getCode();
             res.msg = EStatusCode.NOTLOGIN.getMsg();
             response.getOutputStream().write(JSON.toJSONBytes(res));

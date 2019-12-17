@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import top.ivyxo.web.common.data.RedisKeyPrefix;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.common.tools.DateUtil;
+import top.ivyxo.web.common.tools.RedisUtil;
 import top.ivyxo.web.dao.UUserDao;
 import top.ivyxo.web.entity.UUserDO;
 import top.ivyxo.web.model.UUserVO;
@@ -17,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -32,7 +32,9 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    RedisUtil redisUtil;
+
+    long TWO_HOURS = 7200;
 
     @Autowired
     private UUserDao userDao;
@@ -64,7 +66,6 @@ public class UserServiceImpl implements UserService {
         UUserVO userVO = new UUserVO();
         userDO = select(userRegisterQuery.getAccount());
         BeanUtils.copyProperties(userDO,userVO);
-        userVO.setUserSession(DigestUtils.md5Hex(userVO.getId().toString()));
         res.data = userVO;
         LOG.info("添加用户成功,返回实体:{}",userVO.toString());
         return res;
@@ -94,7 +95,7 @@ public class UserServiceImpl implements UserService {
         userVO.setUserSession(DigestUtils.md5Hex(userVO.getId().toString()));
         res.data = userVO;
         String userValue = JSONObject.toJSONString(userVO);
-        redisTemplate.opsForValue().set(RedisKeyPrefix.USER + userVO.getId(),userValue);
+        redisUtil.set(RedisKeyPrefix.USER + userVO.getId(),userValue,TWO_HOURS);
         LOG.info("登录成功,用户信息为:{}",userValue);
         return res;
     }
@@ -103,8 +104,9 @@ public class UserServiceImpl implements UserService {
     public ResponseObj<Integer> loginOut(Long userId) {
         ResponseObj<Integer> res = new ResponseObj<>();
         //清除缓存
-        redisTemplate.delete(RedisKeyPrefix.USER + userId);
+        redisUtil.del(RedisKeyPrefix.USER + userId);
         res.data = EUserServiceCode.SUCCESS.getCode();
+        LOG.info("退出登录成功");
         return res;
     }
 
