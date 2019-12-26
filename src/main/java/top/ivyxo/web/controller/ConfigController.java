@@ -1,20 +1,29 @@
 package top.ivyxo.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import top.ivyxo.web.common.data.EStatusCode;
+import top.ivyxo.web.common.data.RedisKeyPrefix;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.common.tools.DateUtil;
+import top.ivyxo.web.common.tools.RedisUtil;
+import top.ivyxo.web.dao.SysConfigDao;
 import top.ivyxo.web.dao.UUserDao;
+import top.ivyxo.web.entity.SySConfigDO;
 import top.ivyxo.web.entity.UUserDO;
+import top.ivyxo.web.model.SySConfigVO;
+import top.ivyxo.web.model.UserRegisterQuery;
+import top.ivyxo.web.service.SysConfigService;
+import top.ivyxo.web.service.utils.UserHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author HYR
@@ -32,10 +41,13 @@ public class ConfigController {
     HttpServletRequest httpServletRequest;
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisUtil redisUtil;
 
     @Autowired
-    private UUserDao userDao;
+    private SysConfigService sysConfigService;
+
+    @Autowired
+    private SysConfigDao sysConfigDao;
 
     @RequestMapping(value = "/state",method = RequestMethod.GET)
     public ResponseObj<String> getConfigState(){
@@ -43,16 +55,16 @@ public class ConfigController {
         ResponseObj<String> res = new ResponseObj<>();
         String testRedisKey = "redis_test_key:" + port;
         try {
-            redisTemplate.opsForValue().set(testRedisKey, DateUtil.getNowTime());
+            redisUtil.set(testRedisKey, DateUtil.getNowTime());
         }catch (Exception e){
             res.data = "连接不到redis";
             return res;
         }
-        String userJsonStr = "";
+        String daoJsonStr = "";
         try {
-            UUserDO userDO = userDao.selectByAccount("test");
-            if(userDO != null){
-                userJsonStr = JSONObject.toJSONString(userDO);
+            SySConfigDO sySConfigDO = sysConfigDao.selectByKey("web_url");
+            if(sySConfigDO != null){
+                daoJsonStr = JSONObject.toJSONString(sySConfigDO);
             }
         }catch (Exception e){
             res.data = "连接不到mysql";
@@ -62,9 +74,33 @@ public class ConfigController {
                 + "\n访问域名:" + httpServletRequest.getServerName()
                 + "\n访问端口:" + httpServletRequest.getServerPort()
                 + "\n请求地址:" + httpServletRequest.getServletPath()
-                + "\n获取redis值:" + redisTemplate.opsForValue().get(testRedisKey)
-                + "\n获取mysql数据库值:" + userJsonStr;
+                + "\n获取redis值:" + redisUtil.get(testRedisKey)
+                + "\n获取mysql数据库值:" + daoJsonStr;
         return res;
     }
 
+    @RequestMapping(value = "/info",method = RequestMethod.GET)
+    public ResponseObj<List<SySConfigVO>> info(){
+        return sysConfigService.list();
+    }
+
+    /**
+     * 首页检查用户是否登录 Richard - 2019-12-24 10:28:59
+     * @return
+     */
+    @RequestMapping(value = "/checkLogin",method = RequestMethod.POST)
+    public ResponseObj<String> checkLogin(){
+        ResponseObj<String> res = new ResponseObj<>();
+        String userId = httpServletRequest.getParameter("userId");
+        String userSession = httpServletRequest.getParameter("userSession");
+        if(StringUtils.isAnyEmpty(userId, userSession)
+                || !userSession.equals(DigestUtils.md5Hex(userId))
+                || redisUtil.get(RedisKeyPrefix.USER + userId) == null){
+            LOG.info("进入首页，用户未登录userId:{},userSession:{}", userId, userSession);
+            res.code = EStatusCode.CHECK_NOT_LOGIN.getCode();
+            res.msg = EStatusCode.CHECK_NOT_LOGIN.getMsg();
+            return res;
+        }
+        return res;
+    }
 }

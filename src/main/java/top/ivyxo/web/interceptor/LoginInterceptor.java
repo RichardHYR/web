@@ -1,18 +1,16 @@
 package top.ivyxo.web.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import top.ivyxo.web.common.data.EStatusCode;
 import top.ivyxo.web.common.data.RedisKeyPrefix;
 import top.ivyxo.web.common.data.ResponseObj;
+import top.ivyxo.web.common.tools.RedisUtil;
 import top.ivyxo.web.service.UserService;
 import top.ivyxo.web.service.utils.UserHolder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,7 +28,7 @@ public class LoginInterceptor implements HandlerInterceptor{
     private static final Logger LOG = LoggerFactory.getLogger(LoginInterceptor.class);
 
     @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private RedisUtil redisUtil;
 
     @Autowired
     private UserService userService;
@@ -43,7 +41,7 @@ public class LoginInterceptor implements HandlerInterceptor{
         ResponseObj res = new ResponseObj();
         if(userId == null || userSession == null
                 || !userSession.equals(DigestUtils.md5Hex(userId))
-                || redisTemplate.opsForValue().get(RedisKeyPrefix.USER + userId) == null){
+                || redisUtil.get(RedisKeyPrefix.USER + userId) == null){
             LOG.info("输出请求信息:"
                     + "\n Proto: " + request.getProtocol()
                     + "\n Host: " + request.getRemoteHost()
@@ -57,8 +55,8 @@ public class LoginInterceptor implements HandlerInterceptor{
                     + "\n user_id: " + request.getHeader("user_id")
                     + "\n user_session: " + request.getHeader("user_session")
             );
-            res.code = EStatusCode.NOTLOGIN.getCode();
-            res.msg = EStatusCode.NOTLOGIN.getMsg();
+            res.code = EStatusCode.NOT_LOGIN.getCode();
+            res.msg = EStatusCode.NOT_LOGIN.getMsg();
             response.getOutputStream().write(JSON.toJSONBytes(res));
             return false;
         }

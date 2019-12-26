@@ -16,9 +16,22 @@ public class SySConfigVO extends BaseEntity {
     private String sysKey;
 
     /**
+     * 系统标题值
+     */
+    private String sysTitle;
+
+    /**
      * 系统value值
      */
     private String sysValue;
+
+    public String getSysTitle() {
+        return sysTitle;
+    }
+
+    public void setSysTitle(String sysTitle) {
+        this.sysTitle = sysTitle;
+    }
 
     public String getSysKey() {
         return sysKey;

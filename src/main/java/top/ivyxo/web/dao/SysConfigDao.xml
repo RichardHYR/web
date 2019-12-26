@@ -12,10 +12,11 @@
         <result property="gmtModified"         column="gmt_modified" />
         <result property="remark"              column="remark" />
         <!--以上为公用属性-->
+        <result property="sysTitle"              column="sys_title"/>
         <result property="sysKey"              column="sys_key"/>
         <result property="sysValue"            column="sys_value"/>
-        <result property="isUse"              column="is_use"/>
-        <result property="isDel"              column="is_del"/>
+        <result property="use"              column="is_use"/>
+        <result property="del"              column="is_del"/>
     </resultMap>
 
     <sql id="view_columns">
@@ -23,6 +24,7 @@
         gmt_create,
         gmt_modified,
         remark,
+        sys_title,
         sys_key,
         sys_value,
         is_use,
@@ -33,6 +35,7 @@
         gmt_create,
         gmt_modified,
         remark,
+        sys_title,
         sys_key,
         sys_value,
         is_use,
@@ -54,7 +57,7 @@
     <select id="listByKey" parameterType="String" resultMap="sysConfigResultMap">
         select
         <include refid="view_columns"/>
-        FROM sys_config WHERE is_del != 1 AND sys_key LIKE '#{key}%'
+        FROM sys_config WHERE is_del != 1 AND sys_key like #{key}"%"
     </select>
 
     <!-- 插入表中有自增id时,设置useGeneratedKeys="true",keyProperty="id"可以获取表记录添加后的自增Id   -->
@@ -64,6 +67,7 @@
         ) values (
         #{gmtCreate},
         #{gmtModified},
+        #{sysTitle},
         #{sysKey},
         #{sysValue},
         #{use},
@@ -76,6 +80,10 @@
         gmt_modified = now()
         <if test="remark != null">
             ,remark = #{remark}
+        </if>
+
+        <if test="sysTitle != null">
+            ,sys_title = #{sysTitle}
         </if>
 
         <if test="sysValue != null">

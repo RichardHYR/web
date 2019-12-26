@@ -15,6 +15,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Autowired
     private LoginInterceptor loginInterceptor;
 
+    @Autowired
+    private ConfigInterceptor configInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
@@ -32,5 +35,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns(addPathPatterns)
                 .excludePathPatterns(excludePathPatterns);
+
+        //注册公用拦截器
+        registry.addInterceptor(configInterceptor)
+                .addPathPatterns("/config/**");
     }
 }

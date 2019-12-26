@@ -2,19 +2,31 @@ package top.ivyxo.web.common.data;
 
 /**
  * 常用状态码
+ * @author HYR
  */
 public enum EStatusCode {
-	SUCCESS("成功","200"),
-	INVALID_PARAM("非法入参","20001"),
-	RMDB_ERR("数据库异常","20002"),
-	NOTLOGIN("请先登录","200011"),
-	UNKNOWN_ERR("未知错误","500000");
+	//20000公共
+	SUCCESS("成功",200),
+
+	//50000未知错误
+	UNKNOWN_ERR("未知错误",50000),
+	RMDB_ERR("数据库异常",50001),
+	INVALID_PARAM("非法入参",50002),
+
+	//40000业务错误
+	CHECK_NOT_LOGIN("用户未登录",40101),
+	NOT_LOGIN("请先登录",400102),
+
+	ACCOUNT_EXIST("该账户已存在",400201),
+	PASSWORD_FAIL("密码输入不一致",400203),
+
+	ACCOUNT_PASSWORD_MISTAKE("账户或密码错误",400301);
 
 	private String msg;
 	
-	public String code;
+	public Integer code;
 
-	private EStatusCode(String msg, String code) {
+	private EStatusCode(String msg, Integer code) {
 		this.msg = msg;
 		this.code = code;
 	}
@@ -23,7 +35,7 @@ public enum EStatusCode {
 		return msg;
 	}
 
-	public String getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	

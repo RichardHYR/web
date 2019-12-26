@@ -15,13 +15,13 @@ public class ResponseObj<T> implements Serializable {
 
 	}
 
-	public ResponseObj(String code, String msg) {
+	public ResponseObj(Integer code, String msg) {
 		super();
 		this.code = code;
 		this.msg = msg;
 	}
 
-	public String code = EStatusCode.SUCCESS.getCode();
+	public Integer code = EStatusCode.SUCCESS.getCode();
 	
 	public T data;
 	

@@ -1,6 +1,7 @@
 package top.ivyxo.web.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import top.ivyxo.web.common.data.EStatusCode;
 import top.ivyxo.web.common.data.RedisKeyPrefix;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.common.tools.DateUtil;
@@ -11,7 +12,6 @@ import top.ivyxo.web.model.UUserVO;
 import top.ivyxo.web.model.UserRegisterQuery;
 import top.ivyxo.web.model.UserUpdateQuery;
 import top.ivyxo.web.service.UserService;
-import top.ivyxo.web.service.code.EUserServiceCode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,8 +45,8 @@ public class UserServiceImpl implements UserService {
         //1.检查账户名是否重复
         if(select(userRegisterQuery.getAccount()) != null){
             LOG.warn("添加用户,账户已存在,请求实体为:{}",userRegisterQuery.toString());
-            res.code = EUserServiceCode.ACCOUNT_EXIST.getCode().toString();
-            res.msg = EUserServiceCode.ACCOUNT_EXIST.getMsg();
+            res.code = EStatusCode.ACCOUNT_EXIST.getCode();
+            res.msg = EStatusCode.ACCOUNT_EXIST.getMsg();
             return res;
         }
         //2.用户密码加密储存
@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
         if(!insert(userDO)){
             LOG.warn("添加用户失败,请求实体为:{},存储实体为:{}"
                     ,userRegisterQuery.toString(),userDO.toString());
-            res.code = EUserServiceCode.FAIL.getCode().toString();
-            res.msg = EUserServiceCode.FAIL.getMsg();
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
             return res;
         }
         UUserVO userVO = new UUserVO();
@@ -78,16 +78,16 @@ public class UserServiceImpl implements UserService {
         UUserDO userDO = select(account);
         if(userDO == null){
             LOG.warn("账户不存在:{}",account);
-            res.code = EUserServiceCode.ACCOUNT_NOT_EXIST.getCode().toString();
-            res.msg = EUserServiceCode.ACCOUNT_NOT_EXIST.getMsg();
+            res.code = EStatusCode.ACCOUNT_PASSWORD_MISTAKE.getCode();
+            res.msg = EStatusCode.ACCOUNT_PASSWORD_MISTAKE.getMsg();
             return res;
         }
         //2.密码和数据库是否吻合
         if(!userDO.getPassword().equals(DigestUtils.md5Hex(password))
                 && !userDO.getPassword().equals(password)){
             LOG.warn("密码错误,输入的账户和密码分别为:{},{}",account,password);
-            res.code = EUserServiceCode.PASSWORD_MISTAKE.getCode().toString();
-            res.msg = EUserServiceCode.PASSWORD_MISTAKE.getMsg();
+            res.code = EStatusCode.ACCOUNT_PASSWORD_MISTAKE.getCode();
+            res.msg = EStatusCode.ACCOUNT_PASSWORD_MISTAKE.getMsg();
             return res;
         }
         UUserVO userVO = new UUserVO();
@@ -105,7 +105,6 @@ public class UserServiceImpl implements UserService {
         ResponseObj<Integer> res = new ResponseObj<>();
         //清除缓存
         redisUtil.del(RedisKeyPrefix.USER + userId);
-        res.data = EUserServiceCode.SUCCESS.getCode();
         LOG.info("退出登录成功");
         return res;
     }
@@ -124,11 +123,10 @@ public class UserServiceImpl implements UserService {
         //3.返回结果
         if(!update(userDO)){
             LOG.warn("更新失败,用户id为:{},请求实体为:{}",userId,userUpdateQuery.toString());
-            res.code = EUserServiceCode.FAIL.getCode().toString();
-            res.msg = EUserServiceCode.FAIL.getMsg();
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
             return res;
         }
-        res.data = EUserServiceCode.SUCCESS.getCode();
         LOG.info("更新成功");
         return res;
     }

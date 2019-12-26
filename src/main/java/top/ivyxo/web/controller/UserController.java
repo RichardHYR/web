@@ -9,7 +9,6 @@ import top.ivyxo.web.model.UUserVO;
 import top.ivyxo.web.model.UserRegisterQuery;
 import top.ivyxo.web.model.UserUpdateQuery;
 import top.ivyxo.web.service.UserService;
-import top.ivyxo.web.service.code.EUserServiceCode;
 import top.ivyxo.web.service.utils.UserHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +48,8 @@ public class UserController {
             return res;
         }
         if(!userRegisterQuery.getPsw1().equals(userRegisterQuery.getPsw2())){
-            res.code = EUserServiceCode.PASSWORD_FAIL.getCode().toString();
-            res.msg = EUserServiceCode.PASSWORD_FAIL.getMsg();
+            res.code = EStatusCode.PASSWORD_FAIL.getCode();
+            res.msg = EStatusCode.PASSWORD_FAIL.getMsg();
             LOG.info("register warning:{},param:{}",res.msg,JSONObject.toJSONString(userRegisterQuery));
             return res;
         }
@@ -87,8 +86,8 @@ public class UserController {
         ResponseObj<Integer> res = new ResponseObj<>();
         String userIdStr = httpServletRequest.getHeader("user_id");
         if(StringUtils.isAnyEmpty(userIdStr)){
-            res.code = EStatusCode.NOTLOGIN.getCode();
-            res.msg = EStatusCode.NOTLOGIN.getMsg();
+            res.code = EStatusCode.NOT_LOGIN.getCode();
+            res.msg = EStatusCode.NOT_LOGIN.getMsg();
             LOG.info("loginOut warning:{}",res.msg);
             return res;
         }

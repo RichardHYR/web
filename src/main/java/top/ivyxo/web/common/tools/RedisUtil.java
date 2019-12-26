@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Redis操作工具类 Richard - 2019-12-18 14:19:44
  * @author HYR
  */
 @Component

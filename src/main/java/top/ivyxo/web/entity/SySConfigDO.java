@@ -3,7 +3,7 @@ package top.ivyxo.web.entity;
 import top.ivyxo.web.common.data.BaseEntity;
 
 /**
- * 系统配置表-实体类 - 2019-12-1 21:00:16
+ * 系统配置表-实体类 - 2019-12-26 16:53:29
  * @author HYR
  */
 public class SySConfigDO extends BaseEntity {
@@ -13,6 +13,11 @@ public class SySConfigDO extends BaseEntity {
      * 系统key值
      */
     private String sysKey;
+
+    /**
+     * 系统标题值
+     */
+    private String sysTitle;
 
     /**
      * 系统value值
@@ -28,6 +33,14 @@ public class SySConfigDO extends BaseEntity {
      * 是否删除,1删除
      */
     private Integer del;
+
+    public String getSysTitle() {
+        return sysTitle;
+    }
+
+    public void setSysTitle(String sysTitle) {
+        this.sysTitle = sysTitle;
+    }
 
     public String getSysKey() {
         return sysKey;
