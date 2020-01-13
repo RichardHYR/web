@@ -1,7 +1,6 @@
 package top.ivyxo.web.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户更新请求体 Richard - 2019-12-4 22:04:54
@@ -10,6 +9,26 @@ import java.util.Date;
 public class UserUpdateQuery implements Serializable {
 
     private static final long serialVersionUID = 8557616444128063305L;
+
+    /**
+     * 更新类型 1用户信息,2密码更新
+     */
+    private Integer type;
+
+    /**
+     * 旧密码
+     */
+    private String oldPsw;
+
+    /**
+     * 新密码
+     */
+    private String newPsw;
+
+    /**
+     * 确认密码
+     */
+    private String confirmPsw;
 
     /**
      * 昵称
@@ -35,6 +54,38 @@ public class UserUpdateQuery implements Serializable {
      * 微信号
      */
     private String wechatAccount;
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getOldPsw() {
+        return oldPsw;
+    }
+
+    public void setOldPsw(String oldPsw) {
+        this.oldPsw = oldPsw;
+    }
+
+    public String getNewPsw() {
+        return newPsw;
+    }
+
+    public void setNewPsw(String newPsw) {
+        this.newPsw = newPsw;
+    }
+
+    public String getConfirmPsw() {
+        return confirmPsw;
+    }
+
+    public void setConfirmPsw(String confirmPsw) {
+        this.confirmPsw = confirmPsw;
+    }
 
     public String getName() {
         return name;
@@ -79,12 +130,15 @@ public class UserUpdateQuery implements Serializable {
     @Override
     public String toString() {
         return "UserUpdateQuery{" +
-                "name='" + name + '\'' +
+                "type=" + type +
+                ", oldPsw='" + oldPsw + '\'' +
+                ", newPsw='" + newPsw + '\'' +
+                ", confirmPsw='" + confirmPsw + '\'' +
+                ", name='" + name + '\'' +
                 ", sex=" + sex +
-                ", birthday=" + birthday +
+                ", birthday='" + birthday + '\'' +
                 ", email='" + email + '\'' +
                 ", wechatAccount='" + wechatAccount + '\'' +
                 '}';
     }
-
 }

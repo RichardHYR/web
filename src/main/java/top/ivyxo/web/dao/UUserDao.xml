@@ -80,25 +80,25 @@
         <if test="authId != null">
             ,auth_id = #{authId}
         </if>
-        <if test="name != null">
+        <if test="name != null and name != ''">
             ,name = #{name}
         </if>
-        <if test="password != null">
+        <if test="password != null and password != ''">
             ,password = #{password}
         </if>
-        <if test="sex != null">
+        <if test="sex != null and sex > 0">
             ,sex = #{sex}
         </if>
-        <if test="birthday != null">
+        <if test="birthday != null and birthday != ''">
             ,birthday = #{birthday}
         </if>
-        <if test="avatarUrl != null">
+        <if test="avatarUrl != null and avatarUrl != ''">
             ,avatar_url = #{avatarUrl}
         </if>
-        <if test="email != null">
+        <if test="email != null and email != ''">
             ,email = #{email}
         </if>
-        <if test="wechatAccount != null">
+        <if test="wechatAccount != null and wechatAccount != ''">
             ,wechat_account = #{wechatAccount}
         </if>
         where id = #{id} or account = #{account}

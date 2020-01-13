@@ -131,6 +131,68 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
+    @Override
+    public ResponseObj<Integer> updatePassword(Long userId, String oldPsw, String newPsw
+            ,String confirmPsw) {
+        ResponseObj<Integer> res = new ResponseObj<>();
+        /**
+         * 1.获取用户的记录，根据id
+         * 2.获取用户的密码
+         * 3.将加密后的旧密码与用户的密码对比
+         * 4.相同则继续，不相同则返回旧密码错误
+         * 5.确认新密码和旧密码是否相同，不同则继续，相同提示请不要设置与旧密码相同的密码
+         * 6.确认新密码和确认密码是否相同，相同则更新，不同则提示二次确认密码错误
+         * 7.更新，返回数据库操作
+         */
+        if(StringUtils.isAnyEmpty(userId + "", oldPsw, newPsw, confirmPsw)){
+            LOG.warn("更新密码数据缺失操作:userId:{}, oldpsw:{}, newPsw:{}, confirmPsw:{}"
+                    ,userId, oldPsw, newPsw, confirmPsw);
+            res.code = EStatusCode.INVALID_PARAM.getCode();
+            res.msg = EStatusCode.INVALID_PARAM.getMsg();
+            return res;
+        }
+        if(oldPsw.equals(newPsw)){
+            LOG.warn("新密码与旧密码相同:oldpsw:{}, newPsw:{}"
+                    ,oldPsw, newPsw);
+            res.code = EStatusCode.UPDATE_PASSWORD_REPEAT.getCode();
+            res.msg = EStatusCode.UPDATE_PASSWORD_REPEAT.getMsg();
+            return res;
+        }
+        if(!newPsw.equals(confirmPsw)){
+            LOG.warn("二次确认密码不同:newPsw:{}, confirmPsw:{}"
+                    ,newPsw, confirmPsw);
+            res.code = EStatusCode.UPDATE_PASSWORD_NOT_SAME.getCode();
+            res.msg = EStatusCode.UPDATE_PASSWORD_NOT_SAME.getMsg();
+            return res;
+        }
+        UUserDO uUserDO = select(userId);
+        if(uUserDO == null){
+            LOG.warn("该用户id找不到用户信息:userId:{}",userId);
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
+            return res;
+        }
+        if(!uUserDO.getPassword().equals(DigestUtils.md5Hex(oldPsw))){
+            LOG.warn("旧密码错误:md5(psw):{}, md5(oldPsw):{}"
+                    ,uUserDO.getPassword(), DigestUtils.md5Hex(oldPsw));
+            res.code = EStatusCode.UPDATE_PASSWORD_FAIL.getCode();
+            res.msg = EStatusCode.UPDATE_PASSWORD_FAIL.getMsg();
+            return res;
+        }
+        UUserDO userDO = new UUserDO();
+        userDO.setId(userId);
+        userDO.setPassword(DigestUtils.md5Hex(newPsw));
+        if(!update(userDO)){
+            LOG.warn("更新密码失败:userDO:{}",userDO.toString());
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
+            return res;
+        }
+        //退出登录
+        redisUtil.del(RedisKeyPrefix.USER + userId);
+        return res;
+    }
+
     /**
      * 查询用户 Richard - 2019-12-3 13:44:28
      * @param id 用户Id

@@ -41,4 +41,14 @@ public interface UserService {
      */
     ResponseObj<Integer> update(Long userId, UserUpdateQuery userUpdateQuery);
 
+    /**
+     * 更新用户密码 Richard
+     * @param userId 用户id
+     * @param oldPsw 旧密码
+     * @param newPsw 新密码
+     * @param confirmPsw 确认新密码
+     * @return
+     */
+    ResponseObj<Integer> updatePassword(Long userId, String oldPsw, String newPsw, String confirmPsw);
+
 }

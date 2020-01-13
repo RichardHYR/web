@@ -57,6 +57,7 @@ public class LoginInterceptor implements HandlerInterceptor{
             );
             res.code = EStatusCode.NOT_LOGIN.getCode();
             res.msg = EStatusCode.NOT_LOGIN.getMsg();
+            response.setHeader("Content-Type","application/json");
             response.getOutputStream().write(JSON.toJSONBytes(res));
             return false;
         }
