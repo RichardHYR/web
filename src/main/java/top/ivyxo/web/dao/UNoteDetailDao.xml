@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- Mapper动态代理参数   -->
+<!--namespace:映射的接口文件全包名一致-->
+<mapper namespace="top.ivyxo.web.dao.UNoteDetailDao">
+
+    <resultMap id="noteDatailResultMap" type="top.ivyxo.web.entity.UNoteDetailDO">
+        <id property="id" column="id" />
+        <result property="gmtCreate"           column="gmt_create" />
+        <result property="gmtModified"         column="gmt_modified" />
+        <result property="remark"              column="remark" />
+        <!--以上为公用属性-->
+        <result property="userId"              column="user_id"/>
+        <result property="title"               column="title"/>
+        <result property="keywordContent"      column="keyword_content"/>
+        <result property="summaryContent"      column="summary_content"/>
+        <result property="mainContent"         column="main_content"/>
+    </resultMap>
+
+    <sql id="view_columns">
+        id,
+        gmt_create,
+        gmt_modified,
+        remark,
+        user_id,
+        title,
+        keyword_content,
+        summary_content,
+        main_content
+    </sql>
+
+    <sql id="tbl_columns">
+        id,
+        gmt_create,
+        gmt_modified,
+        user_id,
+        title
+    </sql>
+
+    <insert id="insert" parameterType="top.ivyxo.web.entity.UNoteDetailDO">
+        insert into u_note_detail (
+        <include refid="tbl_columns"/>
+        ) values (
+            #{id},
+            #{gmtCreate},
+            #{gmtModified},
+            #{userId},
+            #{title}
+        )
+    </insert>
+
+    <update id="update" parameterType="top.ivyxo.web.entity.UNoteDetailDO">
+        update u_note_detail set gmt_modified = now()
+        <if test="title != null and title != ''">
+            ,title = #{title}
+        </if>
+        <if test="keywordContent != null and keywordContent != ''">
+            ,keyword_content = #{keywordContent}
+        </if>
+        <if test="summaryContent != null and summaryContent != ''">
+            ,summary_content = #{summaryContent}
+        </if>
+        <if test="mainContent != null and mainContent != ''">
+            ,main_content = #{mainContent}
+        </if>
+        where id = #{id}
+    </update>
+
+    <select id="selectById" parameterType="Long" resultMap="noteDatailResultMap">
+        select
+            <include refid="view_columns"/>
+        from u_note_detail where id = #{id}
+    </select>
+
+</mapper>

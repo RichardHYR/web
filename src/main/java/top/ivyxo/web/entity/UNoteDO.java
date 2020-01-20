@@ -73,4 +73,15 @@ public class UNoteDO extends BaseEntity {
     public void setShow(Integer show) {
         this.show = show;
     }
+
+    @Override
+    public String toString() {
+        return "UNoteDO{" +
+                "userId=" + userId +
+                ", title='" + title + '\'' +
+                ", userName='" + userName + '\'' +
+                ", del=" + del +
+                ", show=" + show +
+                '}';
+    }
 }

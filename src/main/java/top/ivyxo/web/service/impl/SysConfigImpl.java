@@ -35,7 +35,7 @@ public class SysConfigImpl implements SysConfigService {
         ResponseObj<List<SySConfigVO>> res = new ResponseObj<>();
         //获取web_开头的key值列表
         String key = "web_";
-        //TODO:提取转换列表实体方法
+        // TODO:提取转换列表实体方法
         List<SySConfigDO> list = listByKey(key);
         List<SySConfigVO> listVO = new ArrayList<>();
         for(SySConfigDO sySConfigDO:list){
@@ -43,7 +43,6 @@ public class SysConfigImpl implements SysConfigService {
             BeanUtils.copyProperties(sySConfigDO,vo);
             listVO.add(vo);
         }
-
         res.data = listVO;
         return res;
     }

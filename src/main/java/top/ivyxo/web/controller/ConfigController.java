@@ -14,13 +14,9 @@ import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.common.tools.DateUtil;
 import top.ivyxo.web.common.tools.RedisUtil;
 import top.ivyxo.web.dao.SysConfigDao;
-import top.ivyxo.web.dao.UUserDao;
 import top.ivyxo.web.entity.SySConfigDO;
-import top.ivyxo.web.entity.UUserDO;
 import top.ivyxo.web.model.SySConfigVO;
-import top.ivyxo.web.model.UserRegisterQuery;
 import top.ivyxo.web.service.SysConfigService;
-import top.ivyxo.web.service.utils.UserHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

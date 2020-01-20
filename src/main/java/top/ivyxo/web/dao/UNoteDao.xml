@@ -6,4 +6,102 @@
 <!--namespace:映射的接口文件全包名一致-->
 <mapper namespace="top.ivyxo.web.dao.UNoteDao">
 
+    <resultMap id="noteResultMap" type="top.ivyxo.web.entity.UNoteDO">
+        <id property="id" column="id" />
+        <result property="gmtCreate"           column="gmt_create" />
+        <result property="gmtModified"         column="gmt_modified" />
+        <result property="remark"              column="remark" />
+        <!--以上为公用属性-->
+        <result property="userId"              column="user_id"/>
+        <result property="title"               column="title"/>
+        <result property="userName"            column="user_name"/>
+        <result property="del"                 column="is_del"/>
+        <result property="show"                column="is_show"/>
+    </resultMap>
+
+    <sql id="view_columns">
+        id,
+        gmt_create,
+        gmt_modified,
+        remark,
+        user_id,
+        title,
+        user_name,
+        is_del,
+        is_show
+    </sql>
+
+    <sql id="tbl_columns">
+        gmt_create,
+        gmt_modified,
+        user_id,
+        title,
+        user_name,
+        is_del,
+        is_show
+    </sql>
+
+    <sql id="page_select">
+        AND is_del != 1
+        <if test="userId != null and userId > 0">
+            AND user_id = #{userId}
+        </if>
+        <if test="search != null and search != ''">
+            AND title LIKE #{search}"%"
+        </if>
+    </sql>
+
+    <select id="countList" resultType="Integer">
+        SELECT COUNT(*) FROM u_note WHERE 1=1
+            <include refid="page_select"/>
+    </select>
+
+    <select id="page" resultMap="noteResultMap">
+        SELECT
+            <include refid="view_columns"/>
+        FROM u_note WHERE 1=1
+            <include refid="page_select"/>
+        AND id &lt;= (SELECT id FROM u_note WHERE 1=1
+                        <include refid="page_select"/>
+                    ORDER BY id DESC LIMIT ${(page-1)*pageSize},1)
+        ORDER BY id DESC LIMIT #{pageSize}
+    </select>
+    
+    <select id="selectById" parameterType="Long" resultMap="noteResultMap">
+        SELECT
+            <include refid="view_columns"/>
+        FROM u_note where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="top.ivyxo.web.entity.UNoteDO" useGeneratedKeys="true" keyProperty="id">
+        insert into u_note (
+            <include refid="tbl_columns"/>
+        ) values (
+            #{gmtCreate},
+            #{gmtModified},
+            #{userId},
+            #{title},
+            #{userName},
+            #{del},
+            #{show}
+        )
+    </insert>
+
+    <update id="update" parameterType="top.ivyxo.web.entity.UNoteDO">
+        update u_note set gmt_modified = now()
+        <if test="title != null and title != ''">
+            ,title = #{title}
+        </if>
+        <if test="userName != null and userName != ''">
+            ,user_name = #{userName}
+        </if>
+        <if test="del != null">
+            ,is_del = #{del}
+        </if>
+        <if test="show != null">
+            ,is_show = #{show}
+        </if>
+        where id = #{id}
+    </update>
+
 </mapper>

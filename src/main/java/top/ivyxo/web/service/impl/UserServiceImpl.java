@@ -193,6 +193,17 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
+    @Override
+    public UUserVO selectById(Long id) {
+        UUserDO userDO = select(id);
+        if(userDO == null){
+            return null;
+        }
+        UUserVO userVO = new UUserVO();
+        BeanUtils.copyProperties(userDO, userVO);
+        return userVO;
+    }
+
     /**
      * 查询用户 Richard - 2019-12-3 13:44:28
      * @param id 用户Id

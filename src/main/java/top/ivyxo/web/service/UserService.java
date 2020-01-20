@@ -51,4 +51,10 @@ public interface UserService {
      */
     ResponseObj<Integer> updatePassword(Long userId, String oldPsw, String newPsw, String confirmPsw);
 
+    /**
+     * 根据用户id获取用户数据
+     * @param id 用户Id
+     * @return
+     */
+    UUserVO selectById(Long id);
 }

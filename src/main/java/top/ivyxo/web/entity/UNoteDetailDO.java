@@ -1,12 +1,12 @@
-package top.ivyxo.web.model;
+package top.ivyxo.web.entity;
 
 import top.ivyxo.web.common.data.BaseEntity;
 
 /**
- * 笔记详情表,id为笔记id-显示实体类 - 2019-12-3 14:05:41
+ * 笔记详情表,id为笔记id-实体类 - 2019-12-1 21:00:38
  * @author HYR
  */
-public class UNoteDatailVO extends BaseEntity {
+public class UNoteDetailDO extends BaseEntity {
 
     private static final long serialVersionUID = 1844834282715131478L;
     /**
@@ -76,7 +76,7 @@ public class UNoteDatailVO extends BaseEntity {
 
     @Override
     public String toString() {
-        return "UNoteDatailVO{" +
+        return "UNoteDetailDO{" +
                 "userId=" + userId +
                 ", title='" + title + '\'' +
                 ", keywordContent='" + keywordContent + '\'' +
@@ -84,5 +84,4 @@ public class UNoteDatailVO extends BaseEntity {
                 ", mainContent='" + mainContent + '\'' +
                 '}';
     }
-
 }

@@ -23,7 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
 
         //需要拦截的路径
         String[] addPathPatterns = {
-                "/v1/user/**"
+                "/v1/user/**",
+                "/v1/note/**"
         };
 
         //不需要拦截的路径

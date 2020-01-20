@@ -23,10 +23,11 @@ public class ResponseObj<T> implements Serializable {
 
 	public Integer code = EStatusCode.SUCCESS.getCode();
 	
-	public T data;
-	
 	public String msg;
-	
+
+	public T data;
+
+
 	
 	
 }
