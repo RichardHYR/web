@@ -1,5 +1,6 @@
 package top.ivyxo.web.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +13,7 @@ import top.ivyxo.web.dao.UNoteDetailDao;
 import top.ivyxo.web.entity.UNoteDO;
 import top.ivyxo.web.entity.UNoteDetailDO;
 import top.ivyxo.web.model.NoteQuery;
+import top.ivyxo.web.model.UNoteDetailVO;
 import top.ivyxo.web.model.UNoteVO;
 import top.ivyxo.web.model.UUserVO;
 import top.ivyxo.web.service.NoteService;
@@ -169,6 +171,40 @@ public class NoteServiceImpl implements NoteService {
             res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
             return res;
         }
+        return res;
+    }
+
+    @Override
+    public ResponseObj<UNoteDetailVO> get(Long userId, Long noteId) {
+        /**
+         * 1.根据noteId获取的记录是否存在，不存在返回错误码
+         * 2.noteId获取的列表记录里的userId和登录的userId是否相同,不同返回错误码
+         * 3.相同返回详情记录
+         */
+        ResponseObj<UNoteDetailVO> res = new ResponseObj<UNoteDetailVO>();
+        UNoteDetailDO noteDetailDO = selectNoteDetailById(noteId);
+        if(noteDetailDO == null){
+            LOG.error("该记录下的noteId获取不到笔记详情:noteId:{}", noteId);
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
+            return res;
+        }
+        UNoteDO noteDO = selectNoteById(noteId);
+        if(noteDO == null){
+            LOG.warn("获取不到该笔记id的记录:{}", noteId);
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
+            return res;
+        }
+        if(!userId.equals(noteDO.getUserId())){
+            LOG.warn("该记录下的userId和登录的userId不同:userId:{},note:{}", userId, noteDO.toString());
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
+            return res;
+        }
+        UNoteDetailVO noteDetailVO = new UNoteDetailVO();
+        BeanUtils.copyProperties(noteDetailDO, noteDetailVO);
+        res.data = noteDetailVO;
         return res;
     }
 

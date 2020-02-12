@@ -3,7 +3,8 @@ package top.ivyxo.web.service;
 import top.ivyxo.web.common.data.PageInfo;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.model.NoteQuery;
-import top.ivyxo.web.model.UNoteVO;
+import top.ivyxo.web.model.UNoteDetailVO;
+
 
 /**
  * 笔记服务 Richard - 2020-1-15 16:29:55
@@ -37,5 +38,13 @@ public interface NoteService {
      * @return
      */
     ResponseObj<Integer> update(Long userId, Long noteId, NoteQuery noteQuery);
+
+    /**
+     * 根据笔记id获取笔记详情记录 Richard - 2020-2-12 21:16:46
+     * @param userId 用户Id
+     * @param noteId 笔记id
+     * @return
+     */
+    ResponseObj<UNoteDetailVO> get(Long userId, Long noteId);
 
 }

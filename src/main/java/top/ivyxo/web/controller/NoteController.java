@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import top.ivyxo.web.common.data.PageInfo;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.model.NoteQuery;
+import top.ivyxo.web.model.UNoteDetailVO;
 import top.ivyxo.web.service.NoteService;
 import top.ivyxo.web.service.utils.UserHolder;
 
@@ -44,6 +45,24 @@ public class NoteController {
         ResponseObj<Integer> res = new ResponseObj<>();
         Long userId = (Long) UserHolder.get(UserHolder.USER_ID_KEY);
         res = noteService.update(userId, noteId, noteQuery);
+        return res;
+    }
+
+    @RequestMapping(value = "/{noteId}", method = RequestMethod.DELETE)
+    public ResponseObj<Integer> delete(@PathVariable("noteId") Long noteId){
+        ResponseObj<Integer> res = new ResponseObj<>();
+        NoteQuery noteQuery = new NoteQuery();
+        noteQuery.setDel(1);
+        Long userId = (Long) UserHolder.get(UserHolder.USER_ID_KEY);
+        res = noteService.update(userId, noteId, noteQuery);
+        return res;
+    }
+
+    @RequestMapping(value = "/{noteId}", method = RequestMethod.GET)
+    public ResponseObj<UNoteDetailVO> get(@PathVariable("noteId") Long noteId){
+        ResponseObj<UNoteDetailVO> res = new ResponseObj<>();
+        Long userId = (Long) UserHolder.get(UserHolder.USER_ID_KEY);
+        res = noteService.get(userId, noteId);
         return res;
     }
 
