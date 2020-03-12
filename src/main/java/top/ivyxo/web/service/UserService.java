@@ -57,4 +57,12 @@ public interface UserService {
      * @return
      */
     UUserVO selectById(Long id);
+
+    /**
+     * 获取设置信息 Richard - 2020-3-11 14:21:53
+     * @param id 用户id
+     * @return
+     */
+    ResponseObj<UUserVO> getSettingInfo(Long id);
+
 }

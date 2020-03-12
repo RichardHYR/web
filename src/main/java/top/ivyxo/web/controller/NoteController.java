@@ -7,7 +7,7 @@ import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.model.NoteQuery;
 import top.ivyxo.web.model.UNoteDetailVO;
 import top.ivyxo.web.service.NoteService;
-import top.ivyxo.web.service.utils.UserHolder;
+import top.ivyxo.web.common.tools.UserHolder;
 
 
 /**

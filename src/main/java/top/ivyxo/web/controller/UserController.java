@@ -10,7 +10,7 @@ import top.ivyxo.web.model.UUserVO;
 import top.ivyxo.web.model.UserRegisterQuery;
 import top.ivyxo.web.model.UserUpdateQuery;
 import top.ivyxo.web.service.UserService;
-import top.ivyxo.web.service.utils.UserHolder;
+import top.ivyxo.web.common.tools.UserHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -139,5 +139,37 @@ public class UserController {
         }
         return res;
     }
+
+    /**
+     * 根据用户id获取用户信息 Richard - 2020-3-10 20:52:38
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    ResponseObj<UUserVO> getById(@PathVariable("userId") Long userId){
+        ResponseObj<UUserVO> res = new ResponseObj<UUserVO>();
+        UUserVO userVO = userService.selectById(userId);
+        if(userVO == null){
+            LOG.info("获取不到该id的用户信息: userId:{}", userId);
+            res.code = EStatusCode.UNKNOWN_ERR.getCode();
+            res.msg = EStatusCode.UNKNOWN_ERR.getMsg();
+        }
+        res.data = userVO;
+        return res;
+    }
+
+    /**
+     * 获取用户设置界面的信息 Richard - 2020-3-11 14:55:45
+     * @param userId 用户Id
+     * @return
+     */
+    @RequestMapping(value = "/user/setting/{userId}", method = RequestMethod.GET)
+    ResponseObj<UUserVO> getSettingInfo(@PathVariable("userId")Long userId){
+        ResponseObj<UUserVO> res = new ResponseObj<UUserVO>();
+        res = userService.getSettingInfo(userId);
+        return res;
+    }
+
+
 
 }

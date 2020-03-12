@@ -27,7 +27,4 @@ public class ResponseObj<T> implements Serializable {
 
 	public T data;
 
-
-	
-	
 }

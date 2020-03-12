@@ -1,4 +1,4 @@
-package top.ivyxo.web.service.utils;
+package top.ivyxo.web.common.tools;
 
 import java.util.HashMap;
 import java.util.Map;

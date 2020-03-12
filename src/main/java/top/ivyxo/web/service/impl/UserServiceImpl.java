@@ -6,6 +6,7 @@ import top.ivyxo.web.common.data.RedisKeyPrefix;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.common.tools.DateUtil;
 import top.ivyxo.web.common.tools.RedisUtil;
+import top.ivyxo.web.common.tools.ResponseObjUtil;
 import top.ivyxo.web.dao.UUserDao;
 import top.ivyxo.web.entity.UUserDO;
 import top.ivyxo.web.model.UUserVO;
@@ -128,6 +129,9 @@ public class UserServiceImpl implements UserService {
             return res;
         }
         LOG.info("更新成功");
+        UUserVO userVO = selectById(userId);
+        String userValue = JSONObject.toJSONString(userVO);
+        redisUtil.set(RedisKeyPrefix.USER + userVO.getId(),userValue,TWO_HOURS);
         return res;
     }
 
@@ -202,6 +206,19 @@ public class UserServiceImpl implements UserService {
         UUserVO userVO = new UUserVO();
         BeanUtils.copyProperties(userDO, userVO);
         return userVO;
+    }
+
+    @Override
+    public ResponseObj<UUserVO> getSettingInfo(Long id) {
+        ResponseObj<UUserVO> res = new ResponseObj<UUserVO>();
+        UUserDO userDO = select(id);
+        if(userDO == null){
+            return ResponseObjUtil.fail();
+        }
+        UUserVO userVO = new UUserVO();
+        BeanUtils.copyProperties(userDO, userVO);
+        res.data = userVO;
+        return res;
     }
 
     /**

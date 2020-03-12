@@ -6,7 +6,7 @@ import top.ivyxo.web.common.data.RedisKeyPrefix;
 import top.ivyxo.web.common.data.ResponseObj;
 import top.ivyxo.web.common.tools.RedisUtil;
 import top.ivyxo.web.service.UserService;
-import top.ivyxo.web.service.utils.UserHolder;
+import top.ivyxo.web.common.tools.UserHolder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +39,10 @@ public class LoginInterceptor implements HandlerInterceptor{
         String userId = request.getHeader("user_id");
         String userSession = request.getHeader("user_session");
         ResponseObj res = new ResponseObj();
+        String userRedis = redisUtil.get(RedisKeyPrefix.USER + userId);
         if(userId == null || userSession == null
                 || !userSession.equals(DigestUtils.md5Hex(userId))
-                || redisUtil.get(RedisKeyPrefix.USER + userId) == null){
+                || userRedis == null){
             LOG.info("输出请求信息:"
                     + "\n Proto: " + request.getProtocol()
                     + "\n Host: " + request.getRemoteHost()

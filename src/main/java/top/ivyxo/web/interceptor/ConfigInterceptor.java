@@ -1,14 +1,12 @@
 package top.ivyxo.web.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import top.ivyxo.web.common.data.ResponseObj;
-import top.ivyxo.web.service.utils.UserHolder;
+import top.ivyxo.web.common.tools.UserHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
