@@ -1,6 +1,10 @@
 package top.ivyxo.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,20 +19,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 用户操作控制层 Richard - 2019-12-2 12:16:18
  * @author HYR
  */
+@Api(tags = "用户接口")
 @RestController
 @RequestMapping("/v1")
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
-
-    @Autowired
-    HttpServletRequest httpServletRequest;
 
     @Autowired
     private UserService userService;
@@ -39,6 +39,7 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/register",method = RequestMethod.POST)
+    @ApiOperation(value = "注册", notes = "用户注册")
     public ResponseObj<UUserVO> register(@RequestBody UserRegisterQuery userRegisterQuery){
         ResponseObj<UUserVO> res = new ResponseObj<>();
         if(StringUtils.isAnyEmpty(userRegisterQuery.getAccount(), userRegisterQuery.getName()
@@ -65,6 +66,11 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/login/{account}/{password}",method = RequestMethod.GET)
+    @ApiOperation(value = "登录", notes = "用户登录，该接口为RESETful风格接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "账户", name = "account", required = true),
+            @ApiImplicitParam(value = "密码", name = "password", required = true)
+    })
     public ResponseObj<UUserVO> login(@PathVariable("account")String account
             , @PathVariable("password")String password){
         ResponseObj<UUserVO> res = new ResponseObj<>();
@@ -83,10 +89,14 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/loginOut",method = RequestMethod.DELETE)
-    public ResponseObj<Integer> loginOut(){
+    @ApiOperation(value = "退出登录", notes = "用户退出登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户id", name = "user_id", required = true),
+            @ApiImplicitParam(value = "用户session", name = "user_session", required = true)
+    })
+    public ResponseObj<Integer> loginOut(@RequestHeader("user_id")String userIdStr
+                                            ,@RequestHeader("user_session")String userSession){
         ResponseObj<Integer> res = new ResponseObj<>();
-        String userIdStr = httpServletRequest.getHeader("user_id");
-        String userSession = httpServletRequest.getHeader("user_session");
         if(StringUtils.isAnyEmpty(userIdStr, userSession)
             || !userSession.equals(DigestUtils.md5Hex(userIdStr))){
             res.code = EStatusCode.NOT_LOGIN.getCode();
@@ -104,6 +114,8 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/user/{userSession}",method = RequestMethod.PUT)
+    @ApiOperation(value = "更新", notes = "用户更新")
+    @ApiImplicitParam(value = "登录凭证", name = "userSession", required = true)
     public ResponseObj<Integer> update(@PathVariable("userSession") String userSession
                                         ,@RequestBody UserUpdateQuery userUpdateQuery){
         ResponseObj<Integer> res = new ResponseObj<>();
@@ -146,6 +158,8 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    @ApiOperation(value = "获取用户记录", notes = "根据id获取用户记录")
+    @ApiImplicitParam(value = "用户id", name = "userId", required = true)
     ResponseObj<UUserVO> getById(@PathVariable("userId") Long userId){
         ResponseObj<UUserVO> res = new ResponseObj<UUserVO>();
         UUserVO userVO = userService.selectById(userId);
@@ -164,6 +178,12 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/user/setting/{userId}", method = RequestMethod.GET)
+    @ApiImplicitParams({
+//            @ApiImplicitParam(paramType = "header", value = "用户id", name = "user_id", required = true),
+//            @ApiImplicitParam(paramType = "header", value = "用户session", name = "user_session", required = true),
+            @ApiImplicitParam(value = "用户id", name = "userId", required = true)
+    })
+    @ApiOperation(value = "获取设置界面信息", notes = "根据id获取信息")
     ResponseObj<UUserVO> getSettingInfo(@PathVariable("userId")Long userId){
         ResponseObj<UUserVO> res = new ResponseObj<UUserVO>();
         res = userService.getSettingInfo(userId);

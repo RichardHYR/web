@@ -1,6 +1,10 @@
 package top.ivyxo.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +30,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/config")
+@Api(tags = "系统接口")
 public class ConfigController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigController.class);
@@ -46,6 +51,7 @@ public class ConfigController {
     private SysConfigDao sysConfigDao;
 
     @RequestMapping(value = "/state",method = RequestMethod.GET)
+    @ApiOperation(value = "获取项目运行状态", notes = "获取项目运行状态")
     public ResponseObj<String> getConfigState(){
         LOG.error("测试测试:{}","测试成功");
         ResponseObj<String> res = new ResponseObj<>();
@@ -75,7 +81,9 @@ public class ConfigController {
         return res;
     }
 
+
     @RequestMapping(value = "/info",method = RequestMethod.GET)
+    @ApiOperation(value="获取网站信息", notes="直接获取")
     public ResponseObj<List<SySConfigVO>> info(){
         return sysConfigService.list();
     }
@@ -85,6 +93,7 @@ public class ConfigController {
      * @return
      */
     @RequestMapping(value = "/checkLogin",method = RequestMethod.POST)
+    @ApiOperation(value = "检查用户是否登录", notes = "检查用户是否登录")
     public ResponseObj<String> checkLogin(){
         ResponseObj<String> res = new ResponseObj<>();
         String userId = httpServletRequest.getParameter("userId");
